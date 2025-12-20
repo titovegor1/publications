@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% block title %}Posts - Publications{% endblock %}
+
+{% block content %}
+<h1>All Posts</h1>
+
+{% for post in page_obj %}
+    <div class="post">
+        <h2><a href="{% url 'post_detail' post.pk %}">{{ post.title }}</a></h2>
+        <p><strong>By:</strong> <a href="{% url 'user_posts' post.author.pk %}">{{ post.author.username }}</a> | <strong>Date:</strong> {{ post.pub_date|date:"F d, Y" }}</p>
+        <p>{{ post.text|truncatewords:50 }}</p>
+        <p>
+            <strong>Categories:</strong>
+            {% for category in post.categories.all %}
+                <a href="{% url 'category_posts' category.pk %}">{{ category.title }}</a>{% if not forloop.last %}, {% endif %}
+            {% empty %}
+                No categories
+            {% endfor %}
+        </p>
+    </div>
+{% empty %}
+    <p>No posts yet.</p>
+{% endfor %}
+
+<div class="pagination">
+    {% if page_obj.has_previous %}
+        <a href="?page=1">First</a>
+        <a href="?page={{ page_obj.previous_page_number }}">Previous</a>
+    {% endif %}
+
+    <span>Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+
+    {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}">Next</a>
+        <a href="?page={{ page_obj.paginator.num_pages }}">Last</a>
+    {% endif %}
+</div>
+{% endblock %}

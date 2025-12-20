@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ post.title }} - Publications{% endblock %}
+
+{% block content %}
+<h1>{{ post.title }}</h1>
+<p><strong>By:</strong> <a href="{% url 'user_posts' post.author.pk %}">{{ post.author.username }}</a> | <strong>Date:</strong> {{ post.pub_date|date:"F d, Y H:i" }}</p>
+<p>
+    <strong>Categories:</strong>
+    {% for category in post.categories.all %}
+        <a href="{% url 'category_posts' category.pk %}">{{ category.title }}</a>{% if not forloop.last %}, {% endif %}
+    {% empty %}
+        No categories
+    {% endfor %}
+</p>
+
+<div>
+    {{ post.text|linebreaks }}
+</div>
+
+<hr>
+
+<h2>Comments ({{ post.comments.count }})</h2>
+
+{% for comment in post.comments.all %}
+    <div class="comment">
+        <p><strong>{{ comment.user.username }}</strong> - {{ comment.created_at|date:"F d, Y H:i" }}</p>
+        <p>{{ comment.text|linebreaks }}</p>
+    </div>
+{% empty %}
+    <p>No comments yet.</p>
+{% endfor %}
+
+{% if user.is_authenticated %}
+    <h3>Add Comment</h3>
+    <form method="post" action="{% url 'add_comment' post.pk %}">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="id_text">Your comment:</label>
+            <textarea name="text" id="id_text" rows="3" required></textarea>
+        </div>
+        <button type="submit">Submit Comment</button>
+    </form>
+{% else %}
+    <p><a href="{% url 'login' %}">Login</a> to add a comment.</p>
+{% endif %}
+{% endblock %}

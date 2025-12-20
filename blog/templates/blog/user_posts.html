@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block title %}Posts by {{ author.username }} - Publications{% endblock %}
+
+{% block content %}
+<h1>Posts by {{ author.username }}</h1>
+
+{% for post in posts %}
+    <div class="post">
+        <h2><a href="{% url 'post_detail' post.pk %}">{{ post.title }}</a></h2>
+        <p><strong>Date:</strong> {{ post.pub_date|date:"F d, Y" }}</p>
+        <p>{{ post.text|truncatewords:50 }}</p>
+        <p>
+            <strong>Categories:</strong>
+            {% for category in post.categories.all %}
+                <a href="{% url 'category_posts' category.pk %}">{{ category.title }}</a>{% if not forloop.last %}, {% endif %}
+            {% empty %}
+                No categories
+            {% endfor %}
+        </p>
+    </div>
+{% empty %}
+    <p>No posts by this user.</p>
+{% endfor %}
+{% endblock %}

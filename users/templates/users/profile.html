@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ profile_user.username }}'s Profile - Publications{% endblock %}
+
+{% block content %}
+<h1>{{ profile_user.username }}'s Profile</h1>
+
+<p><strong>Email:</strong> {{ profile_user.email }}</p>
+<p><strong>Joined:</strong> {{ profile_user.date_joined|date:"F d, Y" }}</p>
+
+<h2>Posts</h2>
+<p><a href="{% url 'user_posts' profile_user.pk %}">View all posts by {{ profile_user.username }}</a></p>
+{% endblock %}
